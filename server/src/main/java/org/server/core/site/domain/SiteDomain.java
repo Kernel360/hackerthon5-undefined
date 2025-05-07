@@ -17,11 +17,11 @@ public class SiteDomain extends BaseEntity {
     private String favicon;
     private String name;
 
-    public SiteDomain(String url){
+    public SiteDomain(String url) {
         this(url, "", "");
     }
 
-    public SiteDomain(String url, String favicon){
+    public SiteDomain(String url, String favicon) {
         this(url, favicon, "");
     }
 

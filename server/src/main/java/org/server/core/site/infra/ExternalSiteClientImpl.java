@@ -10,7 +10,7 @@ import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Component
-public class ExternalSiteClientImpl implements ExternalSiteClient{
+public class ExternalSiteClientImpl implements ExternalSiteClient {
 
     private final RestClient restClient;
 
@@ -23,7 +23,7 @@ public class ExternalSiteClientImpl implements ExternalSiteClient{
     public SiteDomain getSite(String url) {
         var html = getHtml(url);
 
-        if(html == null){
+        if (html == null) {
             return new SiteDomain(url);
         }
 
