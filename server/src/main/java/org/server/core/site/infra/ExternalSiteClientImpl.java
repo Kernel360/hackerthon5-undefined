@@ -20,7 +20,7 @@ public class ExternalSiteClientImpl implements ExternalSiteClient {
 
     // TODO sub 도메인 추출까지 가능하도록 해야 함
     @Override
-    public SiteDomain getSite(String url) {
+    public SiteDomain getSiteDomain(String url) {
         var html = getHtml(url);
 
         if (html == null) {
