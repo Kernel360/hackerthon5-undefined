@@ -31,6 +31,20 @@ spring:
     password: password
 
 ---
+spring.config.activate.on-profile: test
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL_TEST}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+---
 spring.config.activate.on-profile: prod
 
 spring:
@@ -39,5 +53,4 @@ spring:
     url: ${server.datasource.url}
     username: ${server.datasource.username}
     password: ${server.datasource.password}
-
 
