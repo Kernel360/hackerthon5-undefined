@@ -25,7 +25,8 @@ repositories {
 
 dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
-    implementation 'org.jsoup:jsoup:1.17.2' // HTML 파싱용
+    implementation 'org.jsoup:jsoup:1.17.2' // html 파싱용
+    implementation 'com.google.guava:guava:33.4.0-jre'
     implementation 'org.jspecify:jspecify:1.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'

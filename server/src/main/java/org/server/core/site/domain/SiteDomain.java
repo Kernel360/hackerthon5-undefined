@@ -13,20 +13,20 @@ import org.server.global.common.BaseEntity;
 public class SiteDomain extends BaseEntity {
 
     @Column(nullable = false)
-    private String url;
+    private String rootDomain;
     private String favicon;
     private String name;
 
-    public SiteDomain(String url) {
-        this(url, "", "");
+    public SiteDomain(String rootDomain) {
+        this(rootDomain, "", "");
     }
 
-    public SiteDomain(String url, String favicon) {
-        this(url, favicon, "");
+    public SiteDomain(String rootDomain, String favicon) {
+        this(rootDomain, favicon, "");
     }
 
-    public SiteDomain(String url, String favicon, String name) {
-        this.url = url;
+    public SiteDomain(String rootDomain, String favicon, String name) {
+        this.rootDomain = rootDomain;
         this.favicon = favicon;
         this.name = name;
     }
