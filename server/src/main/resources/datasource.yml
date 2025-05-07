@@ -16,6 +16,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+    show-sql: true
 ---
 spring.config.activate.on-profile: dev
 
