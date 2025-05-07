@@ -6,6 +6,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.server.core.member.api.payload.request.MemberJoinRequest;
+import org.server.core.member.exception.MemberException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,14 +26,7 @@ class MemberRepositoryTest {
     @BeforeEach
     void setUp() {
         //ID는 JPA가 자동 생성
-        testMember = Member.builder()
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .oAuthProvider(OAuthProvider.GITHUB)
-                .positon(Position.BACKEND)
-                .profileUrl("s3 url")
-                .nickname("testMember")
-                .build();
+        testMember = new Member(OAuthProvider.GITHUB, Position.FRONTEND, "url", "testMember");
     }
 
     @Test
@@ -46,5 +41,16 @@ class MemberRepositoryTest {
         //then
         Assertions.assertThat(maybeMember.isPresent()).isTrue();
         Assertions.assertThat(maybeMember.get().getNickname()).isEqualTo("testMember");
+    }
+
+    @Test
+    void t002() {
+        Assertions.assertThatCode(() ->
+                OAuthProvider.getProvider("github")
+        ).doesNotThrowAnyException();
+
+        Assertions.assertThatThrownBy(() ->
+                OAuthProvider.getProvider("test")
+        ).isInstanceOf(MemberException.class);
     }
 }
