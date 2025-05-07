@@ -1,6 +1,5 @@
 package org.server.core.member.domain;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,10 +24,8 @@ class MemberRepositoryTest {
     void setUp() {
         //ID는 JPA가 자동 생성
         testMember = Member.builder()
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .oAuthProvider(OAuthProvider.GITHUB)
-                .positon(Position.BACKEND)
+                .position(Position.BACKEND)
                 .profileUrl("s3 url")
                 .nickname("testMember")
                 .build();
