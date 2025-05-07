@@ -20,7 +20,7 @@ public class MetricService {
     private final ExternalSiteClient externalSiteClient;
 
     public void save(Long userId, Domain domain, MetricMetadata metric) {
-        var siteDomain = siteDomainRepository.findByDomain(domain.getRoot())
+        var siteDomain = siteDomainRepository.findByRootDomain(domain.getRoot())
                 .orElseGet(() -> siteDomainRepository.save(externalSiteClient.getSiteDomain(domain)));
 
         metricRepository.save(new Metric(userId, siteDomain, metric));

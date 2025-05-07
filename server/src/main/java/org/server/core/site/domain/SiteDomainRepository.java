@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SiteDomainRepository extends JpaRepository<SiteDomain, Long> {
 
-    Optional<SiteDomain> findByDomain(String domain);
+    Optional<SiteDomain> findByRootDomain(String domain);
 }
