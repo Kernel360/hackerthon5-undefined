@@ -4,6 +4,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.server.core.metric.domain.Domain;
 import org.server.core.site.domain.SiteDomain;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -20,18 +21,19 @@ public class ExternalSiteClientImpl implements ExternalSiteClient {
 
     // TODO sub 도메인 추출까지 가능하도록 해야 함
     @Override
-    public SiteDomain getSiteDomain(String url) {
-        var html = getHtml(url);
+    public SiteDomain getSiteDomain(Domain domain) {
+        var rootDomain = domain.getRoot();
+        var html = getHtml(domain.getOriginUrl());
 
         if (html == null) {
-            return new SiteDomain(url);
+            return new SiteDomain(rootDomain);
         }
 
-        var doc = Jsoup.parse(html, url);
+        var doc = Jsoup.parse(html, rootDomain);
         var siteTitle = doc.title();
         var faviconUrl = parseFaviconUrl(doc);
 
-        return new SiteDomain(url, siteTitle, faviconUrl);
+        return new SiteDomain(rootDomain, siteTitle, faviconUrl);
     }
 
     private String parseFaviconUrl(Document doc) {
