@@ -16,6 +16,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/project_artisan_test
+    username: root
+    password: asas3052
 ---
 spring.config.activate.on-profile: dev
 
@@ -28,7 +34,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/project_artisan_test
     username: root
-    password: password
+    password: asas3052
 
 ---
 spring.config.activate.on-profile: prod
