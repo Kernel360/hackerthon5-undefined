@@ -3,7 +3,7 @@ spring:
   application:
     name: server
   config:
-    import: datasource.yml
+    import: application-secret.yml
   profiles:
     active: local
     group:

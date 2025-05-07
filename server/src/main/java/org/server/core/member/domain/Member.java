@@ -3,13 +3,17 @@ package org.server.core.member.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.server.global.common.BaseEntity;
 
-@Getter
 @Entity
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
