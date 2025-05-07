@@ -19,11 +19,10 @@ public enum MemberErrorCode implements BaseErrorCode {
 
     @Override
     public ErrorReason getErrorReason() {
-        return null;
-    }
-
-    @Override
-    public String getExplainError() throws NoSuchFieldException {
-        return "";
+        return ErrorReason.builder()
+                .reason(reason)
+                .code(code)
+                .status(status)
+                .build();
     }
 }

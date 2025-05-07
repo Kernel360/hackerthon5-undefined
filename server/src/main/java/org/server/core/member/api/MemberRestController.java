@@ -21,6 +21,9 @@ public class MemberRestController implements MemberApiDocs {
     @PostMapping("/join")
     public ResponseEntity<Void> join(MemberJoinRequest request) {
         //memberService.join();         //TODO
+
+
+
         return ResponseEntity.noContent().build();
     }
 }
