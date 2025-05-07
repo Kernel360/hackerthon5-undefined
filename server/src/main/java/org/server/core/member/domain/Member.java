@@ -12,7 +12,6 @@ import org.server.global.common.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class Member extends BaseEntity {
 
@@ -25,4 +24,11 @@ public class Member extends BaseEntity {
     private String profileUrl;
 
     private String nickname;
+
+    public Member(OAuthProvider oAuthProvider, Position positon, String profileUrl, String nickname) {
+        this.oAuthProvider = oAuthProvider;
+        this.positon = positon;
+        this.profileUrl = profileUrl;
+        this.nickname = nickname;
+    }
 }
