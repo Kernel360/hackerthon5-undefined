@@ -1,0 +1,14 @@
+
+spring:
+  application:
+    name: server
+  config:
+    import: datasource.yml
+  profiles:
+    active: local
+    group:
+      local: local
+      dev: dev
+      test: test
+      prod: prod
+
