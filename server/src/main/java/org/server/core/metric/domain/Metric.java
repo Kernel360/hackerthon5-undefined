@@ -1,17 +1,19 @@
 package org.server.core.metric.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.server.core.site.domain.SiteDomain;
 
 @Getter
 @Entity
@@ -26,18 +28,23 @@ public class Metric {
     @Column(nullable = false)
     private Long memberId;
 
-    @Column(nullable = false)
-    private Long siteDomain;
+    @ManyToOne
+    private SiteDomain siteDomain;
 
-    @Column(nullable = false)
-    private Instant requestAt;
-
-    @Column(nullable = false)
-    private String path;
+    @Embedded
+    private MetricMetadata metadata;
 
     @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-
+    public Metric(
+            Long memberId,
+            SiteDomain siteDomain,
+            MetricMetadata metadata
+    ) {
+        this.memberId = memberId;
+        this.siteDomain = siteDomain;
+        this.metadata = metadata;
+    }
 }
