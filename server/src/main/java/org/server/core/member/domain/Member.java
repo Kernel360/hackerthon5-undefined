@@ -12,7 +12,6 @@ import org.server.global.common.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
 public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
