@@ -1,0 +1,43 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        create_empty_composites:
+          enabled: true
+
+---
+spring.config.activate.on-profile: local
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+---
+spring.config.activate.on-profile: dev
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/project_artisan_test
+    username: root
+    password: password
+
+---
+spring.config.activate.on-profile: prod
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${server.datasource.url}
+    username: ${server.datasource.username}
+    password: ${server.datasource.password}
+
+
