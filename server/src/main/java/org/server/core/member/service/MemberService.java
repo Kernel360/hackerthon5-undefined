@@ -14,6 +14,8 @@ import org.server.core.member.domain.Member;
 import org.server.core.member.domain.MemberRepository;
 import org.server.core.member.domain.OAuthProvider;
 import org.server.core.member.domain.UserProfile;
+import org.server.core.member.exception.MemberErrorCode;
+import org.server.core.member.exception.MemberException;
 import org.server.core.token.domain.Token;
 import org.server.core.token.service.TokenService;
 import org.springframework.stereotype.Service;
@@ -82,11 +84,9 @@ public class MemberService {
         return memberRepository.findByAuthId(oAuthId);
     }
 
-    public MemberProfileResponse getProfileInfo(long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        return MemberProfileResponse.from(member);
+    public MemberProfileResponse getProfileInfo(Long memberId) {
+        log.info("memberId = {}", memberId);
+        return MemberProfileResponse.from(getById(memberId));
     }
 
     @Transactional
@@ -106,5 +106,9 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
         return MemberProfileResponse.from(memberUpdate);
+    }
+
+    private Member getById(Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

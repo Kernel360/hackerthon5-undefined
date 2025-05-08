@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum MemberErrorCode implements BaseErrorCode {
 
-    UNDEFINED_OAUTH_PROVIDER_ERROR(HttpStatus.BAD_REQUEST.value(), "UNDEFINED_400_1", "올바른 로그인 방식이 아닙니다.");
+    UNDEFINED_OAUTH_PROVIDER_ERROR(HttpStatus.BAD_REQUEST.value(), "MEMBER_400_1", "올바른 로그인 방식이 아닙니다."),
+    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "MEMBER_400_2", "멤버를 찾을 수 없습니다");
 
     private Integer status;
     private String code;

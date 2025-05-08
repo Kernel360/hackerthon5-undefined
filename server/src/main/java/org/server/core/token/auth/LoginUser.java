@@ -3,18 +3,19 @@ package org.server.core.token.auth;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.server.core.member.domain.UserProfile;
 
 @Getter
 @Builder
 @ToString
 public class LoginUser {
-    private final long userNo;
+    private final long memberId;
 
-    private final String userId;
+    private final UserProfile userProfile;
 
     @Builder
-    public LoginUser(long userNo, String userId) {
-        this.userNo = userNo;
-        this.userId = userId;
+    public LoginUser(long memberId, UserProfile userProfile) {
+        this.memberId = memberId;
+        this.userProfile = userProfile;
     }
 }

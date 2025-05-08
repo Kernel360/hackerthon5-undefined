@@ -1,5 +1,6 @@
 package org.server.core.token.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,8 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.server.core.member.domain.Member;
 import org.server.core.member.domain.UserProfile;
+import org.server.core.token.auth.LoginUser;
+import org.server.core.token.config.JwtConfig;
 import org.server.core.token.domain.Token;
 import org.server.core.token.domain.TokenRepository;
 import org.server.core.token.utils.TokenProvider;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TokenService {
 
+    private final JwtConfig jwtConfig;
     private final TokenProvider tokenProvider;
     private final TokenRepository tokenRepository;
 
@@ -43,7 +47,7 @@ public class TokenService {
 
     @Transactional
     public Token save(Long memberId, UserProfile userProfile) {
-        
+
         String accessToken = tokenProvider.createAccessToken(memberId, userProfile);
 
         Token token = Token.builder()
@@ -55,21 +59,23 @@ public class TokenService {
         return tokenRepository.save(token);
     }
 
-    public Member getMemberFromAccessToken(String accessToken) {
-//        Claims claims = Jwts.parser()
-//                .verifyWith(key)
-//                .build()
-//                .parseSignedClaims(accessToken)
-//                .getPayload();
+    public LoginUser getLoginUserFromAccessToken(String accessToken) {
+        Claims claims = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload();
 
+        System.out.println("claims.toString() = " + claims.toString());
 
-        //TODO: 목표 : 액세스 토큰으로 기반으로 회원을 받아온다
-        return null;
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserProfile userProfile = objectMapper.convertValue(
+                claims.get(jwtConfig.getMemberProfileKey()), UserProfile.class
+        );
 
-//        return LoginUser.builder()
-//                .userNo(claims.get(USER_NO_KEY_NAME, Long.class))
-//                .userId(claims.get(USER_ID_KEY_NAME, String.class))
-//                .build();
+        return LoginUser.builder()
+                .memberId(claims.get(jwtConfig.getMemberIdKey(), Long.class))
+                .userProfile(userProfile)
+                .build();
     }
-
 }
