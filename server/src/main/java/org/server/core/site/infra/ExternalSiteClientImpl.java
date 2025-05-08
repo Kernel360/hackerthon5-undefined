@@ -1,7 +1,7 @@
 package org.server.core.site.infra;
 
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.server.core.metric.domain.Domain;
@@ -24,7 +24,7 @@ public class ExternalSiteClientImpl implements ExternalSiteClient {
     @Override
     public SiteDomain getSiteDomain(Domain domain) {
         var rootDomain = domain.getRoot();
-        var html = getHtml(domain.getOriginUrl());
+        var html = getHtml("https://" + domain.getHost());
 
         if (html == null) {
             return new SiteDomain(rootDomain);
@@ -32,15 +32,18 @@ public class ExternalSiteClientImpl implements ExternalSiteClient {
 
         var doc = Jsoup.parse(html, rootDomain);
         var siteTitle = doc.title();
-        var faviconUrl = parseFaviconUrl(doc);
+        var faviconUrl = parseFaviconUrl(doc, domain.getHost());
 
-        return new SiteDomain(rootDomain, siteTitle, faviconUrl);
+        return new SiteDomain(rootDomain, faviconUrl, siteTitle);
     }
 
-    private String parseFaviconUrl(Document doc) {
-        return Optional.ofNullable(doc.selectFirst("link[rel~=(?i)^(shortcut )?icon$]"))
+    private String parseFaviconUrl(Document doc, String rootDomain) {
+        return doc.select("link[rel~=(?i)^(icon|shortcut icon|apple-touch-icon)$]")
+                .stream()
                 .map(faviconLink -> faviconLink.attr("abs:href"))
-                .orElse("");
+                .filter(Strings::isNotBlank)
+                .findFirst()
+                .orElse("https://" + rootDomain + "/favicon.ico");
     }
 
     private String getHtml(String url) {
