@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.server.core.metric.api.payload.response.ActiveSiteDomainEntry;
 import org.server.core.metric.domain.ActiveHourEntry;
 import org.server.core.metric.domain.MetricRepository;
 import org.server.global.utils.LocalDateToInstant;
@@ -28,7 +29,7 @@ public class MetricUsageService {
     private final MetricRepository metricRepository;
 
     // 24시간 사용량 집계
-    public List<ActiveHourEntry> aggregateBy(Long userId, LocalDate date) {
+    public List<ActiveHourEntry> aggregateByDailyUsage(Long userId, LocalDate date) {
         var range = LocalDateToInstant.getBoundaryInstants(date, LocalDateToInstant.SEOUL_ZONE);
 
         var metrics = metricRepository.aggregate24HourUsageBy(userId, range.start(), range.end());
@@ -40,6 +41,16 @@ public class MetricUsageService {
                         .findFirst()
                         .orElse(entry.getValue()))
                 .sorted(Comparator.comparingInt(ActiveHourEntry::hour))
+                .toList();
+    }
+
+    public List<ActiveSiteDomainEntry> aggregateByDomainDailyUsage(Long userId, LocalDate date) {
+        var range = LocalDateToInstant.getBoundaryInstants(date, LocalDateToInstant.SEOUL_ZONE);
+
+        var metrics = metricRepository.aggregate24HourUsageDomainBy(userId, range.start(), range.end());
+
+        return metrics.stream()
+                .map(ActiveSiteDomainEntry::from)
                 .toList();
     }
 }

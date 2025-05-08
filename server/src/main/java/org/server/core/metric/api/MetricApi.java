@@ -3,9 +3,11 @@ package org.server.core.metric.api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.server.core.metric.api.payload.request.DailyUsageRequest;
+import org.server.core.metric.api.payload.request.MetricDailyUsageRequest;
+import org.server.core.metric.api.payload.request.MetricDomainDailyUsageRequest;
 import org.server.core.metric.api.payload.request.MetricGetRequest;
 import org.server.core.metric.api.payload.request.MetricInsertRequest;
+import org.server.core.metric.api.payload.response.ActiveSiteDomainEntry;
 import org.server.core.metric.domain.ActiveHourEntry;
 import org.server.core.metric.domain.ActiveTimeEntry;
 import org.server.core.metric.service.MetricService;
@@ -44,7 +46,12 @@ public class MetricApi {
     }
 
     @GetMapping("daily-usage")
-    public ResponseEntity<List<ActiveHourEntry>> get(@ModelAttribute DailyUsageRequest request) {
-        return ResponseEntity.ok(metricUsageService.aggregateBy(request.userId(), request.date()));
+    public ResponseEntity<List<ActiveHourEntry>> get(@ModelAttribute MetricDailyUsageRequest request) {
+        return ResponseEntity.ok(metricUsageService.aggregateByDailyUsage(request.userId(), request.date()));
+    }
+
+    @GetMapping("/daily-usage/domain-usage-ratio")
+    public ResponseEntity<List<ActiveSiteDomainEntry>> get(@ModelAttribute MetricDomainDailyUsageRequest request) {
+        return ResponseEntity.ok(metricUsageService.aggregateByDomainDailyUsage(request.userId(), request.date()));
     }
 }
