@@ -1,10 +1,10 @@
 const config = {
   metadata: {
-    title: '프로젝트 아티장',
+    title: 'uptime',
     description:
-      '개인 프로젝트 모음',
+      'uptime',
     keywords:
-      '아티장, 프로젝트 아티장'
+      'uptime'
   },
   server: {
     host: 'localhost',
