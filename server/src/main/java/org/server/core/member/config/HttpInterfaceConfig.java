@@ -25,5 +25,4 @@ public class HttpInterfaceConfig {
 
         return factory.createClient(GithubApiHttpInterface.class);
     }
-
 }

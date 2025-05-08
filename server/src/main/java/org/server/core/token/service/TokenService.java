@@ -1,13 +1,15 @@
 package org.server.core.token.service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
+import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.server.core.member.domain.Member;
 import org.server.core.member.domain.UserProfile;
-import org.server.core.member.service.MemberService;
 import org.server.core.token.domain.Token;
 import org.server.core.token.domain.TokenRepository;
 import org.server.core.token.utils.TokenProvider;
@@ -22,10 +24,6 @@ public class TokenService {
 
     private final TokenProvider tokenProvider;
     private final TokenRepository tokenRepository;
-
-    @Value("${jwt.token.secret}")
-    private String secretKey;
-    private final static Long ACCESS_TOKEN_EXPIRE_TIME_MS = 604800000L; // 1주일
 
     @Transactional
     public Token getOrGenerateToken(Long memberId, UserProfile userProfile) {
@@ -45,21 +43,33 @@ public class TokenService {
 
     @Transactional
     public Token save(Long memberId, UserProfile userProfile) {
-
-        Date expiredAt = calcExpiration();
-        String accessToken = tokenProvider.createAccessToken(memberId, userProfile, secretKey, expiredAt);
+        
+        String accessToken = tokenProvider.createAccessToken(memberId, userProfile);
 
         Token token = Token.builder()
                 .memberId(memberId)
                 .accessToken(accessToken)
-                .expiredAt(expiredAt)
+                .expiredAt(tokenProvider.calcExpiration())      //FIXME: 책임 넘겨줬으니 어떻게 받아올건지 고민
                 .build();
 
         return tokenRepository.save(token);
     }
 
-    public Date calcExpiration() {
-        Date now = new Date();
-        return new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME_MS);
+    public Member getMemberFromAccessToken(String accessToken) {
+//        Claims claims = Jwts.parser()
+//                .verifyWith(key)
+//                .build()
+//                .parseSignedClaims(accessToken)
+//                .getPayload();
+
+
+        //TODO: 목표 : 액세스 토큰으로 기반으로 회원을 받아온다
+        return null;
+
+//        return LoginUser.builder()
+//                .userNo(claims.get(USER_NO_KEY_NAME, Long.class))
+//                .userId(claims.get(USER_ID_KEY_NAME, String.class))
+//                .build();
     }
+
 }
