@@ -14,6 +14,8 @@ import org.server.core.metric.domain.ActiveSiteDomainTraceEntry;
 import org.server.core.metric.domain.ActiveTimeEntry;
 import org.server.core.metric.service.MetricService;
 import org.server.core.metric.service.MetricUsageService;
+import org.server.core.token.domain.LoginUser;
+import org.server.core.token.service.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,34 +33,56 @@ public class MetricApi {
 
     private final MetricService metricService;
     private final MetricUsageService metricUsageService;
+    private final TokenService tokenService;
 
     @PostMapping
-    public void insert(@RequestBody MetricInsertRequest request) {
-        log.info("Insert metric: {}", request);
-        metricService.save(request.userId(), request.toDomain(), request.toMetricMetadata());
+    public void insert(
+            @RequestBody MetricInsertRequest request, LoginUser loginUser
+    ) {
+        metricService.save(loginUser.getMemberId(), request.toDomain(), request.toMetricMetadata());
     }
 
     @GetMapping
-    public ResponseEntity<List<ActiveTimeEntry>> get(@ModelAttribute MetricGetRequest request) {
+    public ResponseEntity<List<ActiveTimeEntry>> get(
+            @ModelAttribute MetricGetRequest request,
+            LoginUser loginUser
+    ) {
         log.info("Get metric: {}", request);
-        List<ActiveTimeEntry> activeTime = metricService.findByTerm(request.userId(), request.term());
+        List<ActiveTimeEntry> activeTime = metricService.findByTerm(loginUser.getMemberId(), request.term());
 
         return ResponseEntity.status(HttpStatus.OK).body(activeTime);
     }
 
 
     @GetMapping("daily-usage")
-    public ResponseEntity<List<ActiveHourEntry>> get(@ModelAttribute MetricDailyUsageRequest request) {
-        return ResponseEntity.ok(metricUsageService.aggregateByDailyUsage(request.userId(), request.date()));
+    public ResponseEntity<List<ActiveHourEntry>> get(
+            @ModelAttribute MetricDailyUsageRequest request,
+            LoginUser loginUser
+    ) {
+        return ResponseEntity.ok(metricUsageService.aggregateByDailyUsage(loginUser.getMemberId(), request.date()));
     }
 
     @GetMapping("/daily-usage/domain-usage-ratio")
-    public ResponseEntity<List<ActiveSiteDomainEntry>> get(@ModelAttribute MetricDomainDailyUsageRequest request) {
-        return ResponseEntity.ok(metricUsageService.aggregateByDomainDailyUsage(request.userId(), request.date()));
+    public ResponseEntity<List<ActiveSiteDomainEntry>> get(
+            @ModelAttribute MetricDomainDailyUsageRequest request,
+            LoginUser loginUser
+    ) {
+        return ResponseEntity.ok(metricUsageService.aggregateByDomainDailyUsage(
+                        loginUser.getMemberId(),
+                        request.date()
+                )
+        );
     }
 
     @GetMapping("/daily-usage/trace")
-    public ResponseEntity<List<ActiveSiteDomainTraceEntry>> get(@ModelAttribute MetricDailyUsageTraceRequest request) {
-        return ResponseEntity.ok(metricUsageService.aggregateByDailyUsageTrace(request.userId(), request.date()));
+    public ResponseEntity<List<ActiveSiteDomainTraceEntry>> get(
+            @ModelAttribute MetricDailyUsageTraceRequest request,
+            LoginUser loginUser
+    ) {
+        return ResponseEntity.ok(metricUsageService.aggregateByDailyUsageTrace(
+                        loginUser.getMemberId(),
+                        request.date()
+                )
+        );
     }
 }
