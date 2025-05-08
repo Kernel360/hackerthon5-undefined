@@ -30,4 +30,9 @@ public class Member extends BaseEntity {
         this.profileUrl = profileUrl;
         this.nickname = nickname;
     }
+
+    public void updateProfile(String nickname, Position position) {
+        this.nickname = nickname;
+        this.position = position;
+    }
 }
