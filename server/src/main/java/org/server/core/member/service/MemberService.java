@@ -34,19 +34,16 @@ public class MemberService {
         OAuthProvider provider = OAuthProvider.getProvider(providerName);
         OAuthTokenResponse tokenResponse = getToken(code);
         UserProfile userProfile = getUserProfile(provider, tokenResponse);
-
         Optional<Member> maybeMember = getByAuthId(userProfile.id());
 
         Member member = maybeMember.orElseGet(() -> memberRepository.save(new Member(userProfile))); // 없으면 새로 생성 후 저장
-
-
 
         return LoginResponse.builder()
                 .id(member.getId())
                 .name(member.getNickname())
                 .imageUrl(member.getProfileUrl())
                 .tokenType("Bearer")
-                .accessToken("access-token")        // FIXME
+                .accessToken(tokenResponse.getAccessToken()) //FIXME: 바로 반환하지 말고 가공해서 반환??
                 .refreshToken("refresh-token")      // FIXME
                 .build();
     }
