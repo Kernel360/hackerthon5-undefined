@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberRestController implements MemberApiDocs {
 
     private final MemberService memberService;
-    private final TokenService tokenService;
 
     @Override
     @PostMapping("/join")
@@ -47,27 +46,19 @@ public class MemberRestController implements MemberApiDocs {
     @GetMapping("/login/oauth/{provider}")
     public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestParam String code) {
         LoginResponse response = memberService.tryLogin(code, provider);
-
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/getProfile")
-    public ResponseEntity<MemberProfileResponse> getProfile(HttpServletRequest request) {
-        //FIXME: 관심사 분리, 중복 제거 하고싶지만 일단 보류...
-        String accessToken = tokenService.substringToken(request);
-        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
-
+    public ResponseEntity<MemberProfileResponse> getProfile(LoginUser loginUser) {
         MemberProfileResponse profileResponse = memberService.getProfileInfo(loginUser.getMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
     }
 
     @PutMapping("/setProfile")
     public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest memberUpdateRequest,
-                                                            HttpServletRequest request) {
-        String accessToken = tokenService.substringToken(request);
-        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
+                                                            LoginUser loginUser) {
         MemberProfileResponse response = memberService.setProfileInfo(memberUpdateRequest, loginUser.getMemberId());
-
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
