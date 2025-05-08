@@ -10,12 +10,41 @@ locals {
   secrets_version = formatdate("YYYYMMDDHHMM", timestamp())
 }
 
-// VPC, Subnet, Security Group
+// VPC, Subnet, Security Group, internet gateway, route table
 resource "aws_vpc" "uptime-main" {
   cidr_block = var.vpc_cidr
   tags = {
     Name = "main-vpc"
   }
+}
+
+// 인터넷 게이트웨이 생성
+resource "aws_internet_gateway" "uptime-main" {
+  vpc_id = aws_vpc.uptime-main.id
+
+  tags = {
+    Name = "main-internet-gateway"
+  }
+}
+
+// 라우트 테이블 생성 및 인터넷 게이트웨이 연결
+resource "aws_route_table" "uptime-main" {
+  vpc_id = aws_vpc.uptime-main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.uptime-main.id
+  }
+
+  tags = {
+    Name = "main-route-table"
+  }
+}
+
+// 서브넷과 라우트 테이블 연결
+resource "aws_route_table_association" "uptime-main" {
+  subnet_id      = aws_subnet.uptime-main.id
+  route_table_id = aws_route_table.uptime-main.id
 }
 
 resource "aws_subnet" "uptime-main" {
@@ -40,8 +69,8 @@ resource "aws_security_group" "uptime-backend_sg" {
   vpc_id = aws_vpc.uptime-main.id
 
   ingress {
-    from_port   = 20
-    to_port     = 20
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -49,6 +78,20 @@ resource "aws_security_group" "uptime-backend_sg" {
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port  = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -142,6 +185,7 @@ resource "aws_secretsmanager_secret_version" "github-oauth-secret-version" {
     GITHUB_CLIENT_ID     = var.OAuth2_client_id
     GITHUB_SECRET_KEY = var.OAuth2_client_secret
     GITHUB_REDIRECT_URI  = var.OAuth2_redirect_uri
+    JWT_SECRET_KEY       = var.JWT_secret_key
     DB_URL_TEST          = var.DB_URL_TEST
     DB_USER             = var.DB_USER
     DB_PASSWORD         = var.DB_PASSWORD
@@ -183,15 +227,43 @@ resource "aws_iam_instance_profile" "uptime-ec2-instance-profile" {
 }
 
 
+
+// EC2 Key Pair
+resource "aws_key_pair" "uptime-backend-key-pair" {
+    key_name   = "uptime-backend-key-pair"
+    public_key = file("~/.ssh/uptime-backend-key-pair.pub")
+    tags = {
+        Name = "uptime-backend-key-pair"
+    }
+}
+
 // EC2 Instance
 resource "aws_instance" "web" {
     ami                    = var.ami_id
     instance_type         = var.instance_type
     subnet_id             = aws_subnet.uptime-main.id
     vpc_security_group_ids = [aws_security_group.uptime-backend_sg.id]
-    iam_instance_profile   = aws_iam_instance_profile.uptime-ec2-instance-profile.name
+    //iam_instance_profile   = aws_iam_instance_profile.uptime-ec2-instance-profile.name
+    associate_public_ip_address = true
+    key_name = "uptime-backend-key-pair"
 
     tags = {
         Name = "web-server"
+    }
+  depends_on = [aws_key_pair.uptime-backend-key-pair]
+}
+
+// Elastic IP
+resource "aws_eip_association" "web_eip" {
+    instance_id = aws_instance.web.id
+    allocation_id = var.elastic_ip
+}
+
+// ECR
+resource "aws_ecr_repository" "uptime-ecr" {
+    name = "uptime-ecr"
+    image_tag_mutability = "MUTABLE"
+    tags = {
+        Name = "uptime-ecr"
     }
 }
