@@ -1,6 +1,7 @@
 package org.server.core.metric.service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -67,47 +68,46 @@ public class MetricService {
     }
 
     public List<ActiveTimeEntry> calculateActiveTime(List<Metric> metrics) {
-        Map<SiteDomain, DomainTimeEntry> domainTime = new HashMap<>();
+        List<ActiveTimeEntry> activeTimeEntries = new ArrayList<>();
 
-        // 각 사이트 도메인별로 요청 시간을 계산
-        // path에 따라 요청 시간 계산 로직 추가 필요
+        // 각 사이트 도메인의 path별로 요청 시간을 계산
         for (Metric metric : metrics) {
             SiteDomain siteDomain = metric.getSiteDomain();
-            LocalDateTime requestAt = LocalDateTime.ofInstant(metric.getMetadata().requestAt(),
-                    ZoneOffset.of("+09:00"));
+            String path = metric.getMetadata().path();
+            LocalDateTime requestAt = LocalDateTime.ofInstant(metric.getMetadata().requestAt(), ZoneOffset.of("+00:00"));
 
-            domainTime.putIfAbsent(siteDomain, new DomainTimeEntry(requestAt, 0L));
+            ActiveTimeEntry existingEntry = activeTimeEntries.stream()
+                    .filter(entry -> entry.siteDomain().equals(siteDomain))
+                    .findFirst()
+                    .orElse(null);
 
-            long duration = Duration.between(domainTime.get(siteDomain).getRequestAt(), requestAt).toSeconds();
-            domainTime.get(siteDomain).addDuration(duration);
-            domainTime.get(siteDomain).setRequestAt(requestAt);
+            // 해당 사이트 도메인이 없으면 새로 추가
+            // 해당 사이트 도메인이 있으면 pathDurations를 가져옴
+            if (existingEntry == null) {
+                List<ActiveTimeEntry.PathDuration> pathDurations = new ArrayList<>();
+                pathDurations.add(new ActiveTimeEntry.PathDuration(path, 0L, requestAt));
+                activeTimeEntries.add(new ActiveTimeEntry(siteDomain, pathDurations));
+            } else {
+                List<ActiveTimeEntry.PathDuration> pathDurations = existingEntry.pathDurations();
+                ActiveTimeEntry.PathDuration existingPath = pathDurations.stream()
+                        .filter(pathDuration -> pathDuration.path().equals(path))
+                        .findFirst()
+                        .orElse(null);
+
+                // 해당 path가 없으면 새로 추가
+                // 해당 path가 있으면 duration을 계산
+                if (existingPath == null) {
+                    pathDurations.add(new ActiveTimeEntry.PathDuration(path, 0L, requestAt));
+                } else {
+                    // 요청 시간 계산
+                    Duration duration = Duration.between(existingPath.lastRequestAt(), requestAt);
+                    long totalDuration = existingPath.duration() + duration.toSeconds();
+                    pathDurations.remove(existingPath);
+                    pathDurations.add(new ActiveTimeEntry.PathDuration(path, totalDuration, requestAt));
+                }
+            }
         }
 
-        List<ActiveTimeEntry> activeTime = new ArrayList<>();
-        for (Map.Entry<SiteDomain, DomainTimeEntry> entry : domainTime.entrySet()) {
-            activeTime.add(new ActiveTimeEntry(entry.getKey(), entry.getValue().getDuration()));
-        }
-
-        return activeTime;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    private static class DomainTimeEntry {
-        private LocalDateTime requestAt;
-        private long duration;
-
-        public DomainTimeEntry(LocalDateTime requestAt, long duration) {
-            this.requestAt = requestAt;
-            this.duration = duration;
-        }
-
-        public void setRequestAt(LocalDateTime requestAt) {
-            this.requestAt = requestAt;
-        }
-
-        public void addDuration(long duration) {
-            this.duration += duration;
-        }
+    return activeTimeEntries;
     }
 }
