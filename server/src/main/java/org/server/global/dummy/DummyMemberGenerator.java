@@ -24,8 +24,7 @@ public class DummyMemberGenerator {
                 IntStream.iterate(1, i -> i + 1)
                         .limit(10)
                         .mapToObj(i -> new Member(
-                                OAuthProvider.GITHUB,
-                                Position.BACKEND,
+                                "test"+i,
                                 "https://www.naver.com",
                                 "nickname" + i
                         ))

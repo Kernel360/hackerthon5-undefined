@@ -2,7 +2,10 @@ spring:
   application:
     name: server
   config:
-    import: datasource.yml
+    import:
+      - datasource.yml
+      - optional:file:.env[.properties]
+      - oauth.yml
   profiles:
     active: local
     group:
@@ -10,3 +13,4 @@ spring:
       dev: dev
       test: test
       prod: prod
+

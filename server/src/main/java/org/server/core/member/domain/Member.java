@@ -3,16 +3,16 @@ package org.server.core.member.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.server.global.common.BaseEntity;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 public class Member extends BaseEntity {
+
+    private String authId;
 
     @Enumerated(EnumType.STRING)
     private OAuthProvider oAuthProvider;
@@ -24,11 +24,20 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
-    public Member(OAuthProvider oAuthProvider, Position position, String profileUrl, String nickname) {
-        this.oAuthProvider = oAuthProvider;
-        this.position = position;
+    public Member(String oAuthId, String profileUrl, String nickname) {
+        this.authId = oAuthId;
+        this.oAuthProvider = OAuthProvider.GITHUB;  //FIXME: GITHUB 고정 X
+        this.position = Position.NONE;
         this.profileUrl = profileUrl;
         this.nickname = nickname;
+    }
+
+    public Member(UserProfile userProfile) {
+        this.authId = userProfile.id();
+        this.oAuthProvider = OAuthProvider.GITHUB; //FIXME: GITHUB 고정 X
+        this.position = Position.NONE;
+        this.profileUrl = userProfile.avatarUrl();
+        this.nickname = userProfile.name();
     }
 
     public void updateProfile(String nickname, Position position) {
