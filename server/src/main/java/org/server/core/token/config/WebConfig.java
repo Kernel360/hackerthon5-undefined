@@ -26,6 +26,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authenticationInterceptor)
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/open/*");
+                .excludePathPatterns("/", "/open/*", "/api/v1/member/login/oauth/**");
     }
 }

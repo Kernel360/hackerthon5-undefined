@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum TokenErrorCode implements BaseErrorCode {
 
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST.value(), "TOKEN_400_1", "비정상적인 토큰이 사용되었습니다.");
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST.value(), "TOKEN_400_1", "비정상적인 토큰이 사용되었습니다."),
+    TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "TOKEN_400_2", "토큰값을 찾을 수 없습니다.");
 
     private Integer status;
     private String code;

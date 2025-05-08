@@ -70,4 +70,9 @@ public class MemberRestController implements MemberApiDocs {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping(value = "/login-user")
+    public void argumentResolverTest(final LoginUser loginUser) {
+        log.debug("loginUser : {} ", loginUser);
+    }
 }
