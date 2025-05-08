@@ -12,7 +12,7 @@ import org.server.global.common.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SiteDomain extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String rootDomain;
     private String favicon;
     private String name;
