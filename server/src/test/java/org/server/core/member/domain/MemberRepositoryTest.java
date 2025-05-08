@@ -46,6 +46,10 @@ class MemberRepositoryTest {
                 OAuthProvider.getProvider("github")
         ).doesNotThrowAnyException();
 
+        Assertions.assertThatCode(() ->
+                OAuthProvider.getProvider(null)
+        ).doesNotThrowAnyException();
+
         Assertions.assertThatThrownBy(() ->
                 OAuthProvider.getProvider("test")
         ).isInstanceOf(MemberException.class);
