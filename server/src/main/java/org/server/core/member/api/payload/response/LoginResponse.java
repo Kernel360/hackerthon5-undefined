@@ -3,7 +3,6 @@ package org.server.core.member.api.payload.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.server.core.member.domain.Member;
 
 @Getter
 @NoArgsConstructor

@@ -4,12 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.server.core.member.api.payload.request.MemberJoinRequest;
-import org.server.core.member.api.payload.request.MemberUpdateRequest;
-import org.server.core.member.api.payload.response.MemberProfileResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Undefined 회원 기능 API", description = "회원 관련 기능 API 명세 문서입니다.")

@@ -1,6 +1,5 @@
 package org.server.core.token.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.server.core.token.domain.LoginUser;
 import org.springframework.core.MethodParameter;

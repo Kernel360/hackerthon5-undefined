@@ -1,21 +1,15 @@
 package org.server.core.member.api;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.member.api.payload.request.MemberJoinRequest;
-
-import org.server.core.member.api.payload.response.LoginResponse;
-
 import org.server.core.member.api.payload.request.MemberUpdateRequest;
+import org.server.core.member.api.payload.response.LoginResponse;
 import org.server.core.member.api.payload.response.MemberProfileResponse;
-
 import org.server.core.member.service.MemberService;
 import org.server.core.token.domain.LoginUser;
-import org.server.core.token.service.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,10 +54,5 @@ public class MemberRestController implements MemberApiDocs {
                                                             LoginUser loginUser) {
         MemberProfileResponse response = memberService.setProfileInfo(memberUpdateRequest, loginUser.getMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping(value = "/login-user")
-    public void argumentResolverTest(final LoginUser loginUser) {
-        log.debug("loginUser : {} ", loginUser);
     }
 }

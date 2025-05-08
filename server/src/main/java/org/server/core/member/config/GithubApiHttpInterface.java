@@ -1,14 +1,9 @@
 package org.server.core.member.config;
 
 import java.util.Map;
-import org.server.core.member.api.payload.request.GithubTokenRequest;
 import org.server.core.member.api.payload.response.OAuthTokenResponse;
-import org.server.core.member.domain.UserProfile;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
