@@ -1,15 +1,15 @@
 package org.server.core.member.api.payload.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OAuthTokenResponse {
-    @JsonProperty("access_token")
     String accessToken;
     String scope;
-    @JsonProperty("token_type")
     String tokenType;
 }
