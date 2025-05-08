@@ -1,6 +1,5 @@
 package org.server.core.member.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.server.core.member.domain.OAuthProvider;
 import org.server.core.member.domain.UserProfile;
 import org.server.core.member.exception.MemberErrorCode;
 import org.server.core.member.exception.MemberException;
-import org.server.core.token.auth.LoginUser;
 import org.server.core.token.domain.Token;
 import org.server.core.token.service.TokenService;
 import org.springframework.stereotype.Service;

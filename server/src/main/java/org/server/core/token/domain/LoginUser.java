@@ -1,4 +1,4 @@
-package org.server.core.token.auth;
+package org.server.core.token.domain;
 
 import lombok.Builder;
 import lombok.Getter;

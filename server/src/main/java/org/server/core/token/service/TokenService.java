@@ -2,24 +2,17 @@ package org.server.core.token.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.Optional;
-import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
-import org.server.core.member.domain.Member;
 import org.server.core.member.domain.UserProfile;
-import org.server.core.token.auth.LoginUser;
+import org.server.core.token.domain.LoginUser;
 import org.server.core.token.config.JwtConfig;
 import org.server.core.token.domain.Token;
 import org.server.core.token.domain.TokenRepository;
 import org.server.core.token.exception.TokenErrorCode;
 import org.server.core.token.exception.TokenException;
 import org.server.core.token.utils.TokenProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

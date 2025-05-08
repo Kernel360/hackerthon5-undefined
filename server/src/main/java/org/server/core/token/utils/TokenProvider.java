@@ -6,11 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.server.core.member.domain.UserProfile;
-import org.server.core.token.auth.LoginUser;
 import org.server.core.token.config.JwtConfig;
 import org.server.core.token.exception.TokenErrorCode;
 import org.server.core.token.exception.TokenException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -11,7 +11,7 @@ import org.server.core.member.api.payload.request.MemberUpdateRequest;
 import org.server.core.member.api.payload.response.MemberProfileResponse;
 
 import org.server.core.member.service.MemberService;
-import org.server.core.token.auth.LoginUser;
+import org.server.core.token.domain.LoginUser;
 import org.server.core.token.service.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
