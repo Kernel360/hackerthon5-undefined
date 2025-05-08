@@ -1,5 +1,6 @@
 package org.server.core.member.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.server.core.member.domain.OAuthProvider;
 import org.server.core.member.domain.UserProfile;
 import org.server.core.member.exception.MemberErrorCode;
 import org.server.core.member.exception.MemberException;
+import org.server.core.token.auth.LoginUser;
 import org.server.core.token.domain.Token;
 import org.server.core.token.service.TokenService;
 import org.springframework.stereotype.Service;
@@ -85,27 +87,21 @@ public class MemberService {
     }
 
     public MemberProfileResponse getProfileInfo(Long memberId) {
-        log.info("memberId = {}", memberId);
         return MemberProfileResponse.from(getById(memberId));
     }
 
     @Transactional
-    public MemberProfileResponse setProfileInfo(long memberId, MemberUpdateRequest request) {
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
+    public MemberProfileResponse setProfileInfo(MemberUpdateRequest updateRequest, Long memberId) {
+        Member member = getById(memberId);
         member.updateProfile(
-                request.nickname(),
-                request.position()
+                updateRequest.nickname(),
+                updateRequest.position()
         );
 
+        //TODO: SETTER 트랜잭션 자동 변경 적용 여부 확인 필요
         memberRepository.save(member);
 
-        Member memberUpdate = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        return MemberProfileResponse.from(memberUpdate);
+        return MemberProfileResponse.from(member);
     }
 
     private Member getById(Long id) {

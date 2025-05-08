@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
@@ -15,6 +16,8 @@ import org.server.core.token.auth.LoginUser;
 import org.server.core.token.config.JwtConfig;
 import org.server.core.token.domain.Token;
 import org.server.core.token.domain.TokenRepository;
+import org.server.core.token.exception.TokenErrorCode;
+import org.server.core.token.exception.TokenException;
 import org.server.core.token.utils.TokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -60,13 +63,7 @@ public class TokenService {
     }
 
     public LoginUser getLoginUserFromAccessToken(String accessToken) {
-        Claims claims = Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes(StandardCharsets.UTF_8)))
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload();
-
-        System.out.println("claims.toString() = " + claims.toString());
+        Claims claims = tokenProvider.getClaims(accessToken);
 
         ObjectMapper objectMapper = new ObjectMapper();
         UserProfile userProfile = objectMapper.convertValue(
@@ -77,5 +74,15 @@ public class TokenService {
                 .memberId(claims.get(jwtConfig.getMemberIdKey(), Long.class))
                 .userProfile(userProfile)
                 .build();
+    }
+
+    public String substringToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+        }
+
+        return authHeader.substring(7);
     }
 }

@@ -51,23 +51,23 @@ public class MemberRestController implements MemberApiDocs {
         return ResponseEntity.ok().body(response);
     }
 
-
     @GetMapping("/getProfile")
     public ResponseEntity<MemberProfileResponse> getProfile(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(authHeader.substring(7));
-        MemberProfileResponse profileResponse = memberService.getProfileInfo(loginUser.getMemberId());
+        //FIXME: 관심사 분리, 중복 제거 하고싶지만 일단 보류...
+        String accessToken = tokenService.substringToken(request);
+        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
 
+        MemberProfileResponse profileResponse = memberService.getProfileInfo(loginUser.getMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
     }
 
     @PutMapping("/setProfile")
-    public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest request) {
-        //임시 유저 아이디
-        long memberId = 1;
+    public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest memberUpdateRequest,
+                                                            HttpServletRequest request) {
+        String accessToken = tokenService.substringToken(request);
+        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
+        MemberProfileResponse response = memberService.setProfileInfo(memberUpdateRequest, loginUser.getMemberId());
 
-        MemberProfileResponse profileResponse = memberService.setProfileInfo(memberId, request);         //TODO
-
-        return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

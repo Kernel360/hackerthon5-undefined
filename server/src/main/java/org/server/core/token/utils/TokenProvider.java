@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.server.core.member.domain.UserProfile;
 import org.server.core.token.auth.LoginUser;
 import org.server.core.token.config.JwtConfig;
+import org.server.core.token.exception.TokenErrorCode;
+import org.server.core.token.exception.TokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,5 +36,20 @@ public class TokenProvider {
                 .compact();
 
         return token;
+    }
+
+    public Claims getClaims(String accessToken) {
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parseSignedClaims(accessToken)
+                    .getPayload();
+        } catch (Exception e) {
+            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+        }
+
+        return claims;
     }
 }

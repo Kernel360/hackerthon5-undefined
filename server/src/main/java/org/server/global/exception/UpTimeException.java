@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UndefinedException extends RuntimeException {
+public class UpTimeException extends RuntimeException {
     private BaseErrorCode errorCode;
 
     public ErrorReason getErrorReason() {
