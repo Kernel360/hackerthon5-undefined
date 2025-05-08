@@ -7,6 +7,9 @@ import org.server.core.member.api.payload.response.LoginResponse;
 import org.server.core.member.api.payload.response.OAuthTokenResponse;
 import org.server.core.member.config.GithubApiHttpInterface;
 import org.server.core.member.config.OAuthConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.server.core.member.api.payload.request.MemberUpdateRequest;
+import org.server.core.member.api.payload.response.MemberProfileResponse;
 import org.server.core.member.domain.Member;
 import org.server.core.member.domain.MemberRepository;
 import org.server.core.member.domain.OAuthProvider;
@@ -16,6 +19,7 @@ import org.server.core.token.service.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -76,5 +80,31 @@ public class MemberService {
 
     private Optional<Member> getByAuthId(String oAuthId) {
         return memberRepository.findByAuthId(oAuthId);
+    }
+
+    public MemberProfileResponse getProfileInfo(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        return MemberProfileResponse.from(member);
+    }
+
+    @Transactional
+    public MemberProfileResponse setProfileInfo(long memberId, MemberUpdateRequest request) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        member.updateProfile(
+                request.nickname(),
+                request.position()
+        );
+
+        memberRepository.save(member);
+
+        Member memberUpdate = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        return MemberProfileResponse.from(memberUpdate);
     }
 }
