@@ -13,7 +13,6 @@ spring:
       test: test
       prod: prod
 
-
 custom:
   oauth:
       clientId: ${GITHUB_CLIENT_ID}
