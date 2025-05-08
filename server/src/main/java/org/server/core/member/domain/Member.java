@@ -24,9 +24,10 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
-    public Member(OAuthProvider oAuthProvider, Position position, String profileUrl, String nickname) {
-        this.oAuthProvider = oAuthProvider;
-        this.position = position;
+    public Member(String oAuthId, String profileUrl, String nickname) {
+        this.authId = oAuthId;
+        this.oAuthProvider = OAuthProvider.GITHUB;  //FIXME: GITHUB 고정 X
+        this.position = Position.NONE;
         this.profileUrl = profileUrl;
         this.nickname = nickname;
     }
