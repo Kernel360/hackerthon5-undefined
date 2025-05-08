@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.member.api.payload.request.MemberJoinRequest;
 import org.server.core.member.api.payload.response.LoginResponse;
+import org.server.core.member.domain.UserProfile;
 import org.server.core.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,9 +32,9 @@ public class MemberRestController implements MemberApiDocs {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/login/oauth")
-    public ResponseEntity<LoginResponse> signUp(@RequestParam String code) {
-        LoginResponse response = memberService.signUp("github", code);       //fixme: 하드코딩 X
+    @GetMapping("/login/oauth/{provider}")
+    public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestParam String code) {
+        LoginResponse response = memberService.tryLogin(code, provider);
 
         return ResponseEntity.ok().body(response);
     }

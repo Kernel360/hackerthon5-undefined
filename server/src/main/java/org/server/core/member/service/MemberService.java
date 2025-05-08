@@ -12,6 +12,8 @@ import org.server.core.member.domain.Member;
 import org.server.core.member.domain.MemberRepository;
 import org.server.core.member.domain.OAuthProvider;
 import org.server.core.member.domain.UserProfile;
+import org.server.core.token.domain.Token;
+import org.server.core.token.service.TokenService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -27,25 +29,37 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final OAuthConfig oAuthConfig;
+    private final TokenService tokenService;
+
+    public UserProfile getUserProfile(String code, String provider) {
+        OAuthProvider oAuthProvider = OAuthProvider.getProvider(provider);
+        OAuthTokenResponse oAuthTokenResponse = getToken(code);
+
+        return getUserProfile(oAuthProvider, oAuthTokenResponse);
+    }
 
     @Transactional
-    public LoginResponse signUp(String providerName, String code) {
+    public Long getIdByUserProfileOrSave(UserProfile userProfile) {
+        return getByAuthId(userProfile.id())
+                .map(Member::getId)
+                .orElseGet(() -> join(userProfile));
+    }
 
-        OAuthProvider provider = OAuthProvider.getProvider(providerName);
-        OAuthTokenResponse tokenResponse = getToken(code);
-        UserProfile userProfile = getUserProfile(provider, tokenResponse);
-        Optional<Member> maybeMember = getByAuthId(userProfile.id());
-
-        Member member = maybeMember.orElseGet(() -> memberRepository.save(new Member(userProfile))); // 없으면 새로 생성 후 저장
+    @Transactional
+    public LoginResponse tryLogin(String code, String provider) {
+        UserProfile userProfile = getUserProfile(code, provider);
+        Long memberId = getIdByUserProfileOrSave(userProfile);
+        Token token = tokenService.getOrGenerateToken(memberId, userProfile);
 
         return LoginResponse.builder()
-                .id(member.getId())
-                .name(member.getNickname())
-                .imageUrl(member.getProfileUrl())
                 .tokenType("Bearer")
-                .accessToken(tokenResponse.getAccessToken()) //FIXME: 바로 반환하지 말고 가공해서 반환??
-                .refreshToken("refresh-token")      // FIXME
+                .accessToken(token.getAccessToken())
                 .build();
+    }
+
+    @Transactional
+    public Long join(UserProfile userProfile) {
+        return memberRepository.save(new Member(userProfile)).getId();
     }
 
     private OAuthTokenResponse getToken(String code) {
