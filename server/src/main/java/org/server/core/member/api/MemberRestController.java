@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.member.api.payload.request.MemberJoinRequest;
 import org.server.core.member.api.payload.request.MemberUpdateRequest;
+import org.server.core.member.api.payload.response.MemberProfileResponse;
 import org.server.core.member.domain.Member;
 import org.server.core.member.service.MemberService;
 import org.server.core.metric.api.payload.request.MetricInsertRequest;
@@ -32,26 +33,26 @@ public class MemberRestController implements MemberApiDocs {
     @Operation(summary = "회원정보 조회", description = "현재 로그인한 회원의 프로필 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "회원정보 조회 성공")
     @GetMapping("/getProfile")
-    public ResponseEntity<Member> getProfile() {
+    public ResponseEntity<MemberProfileResponse> getProfile() {
 
         //임시 유저 아이디
         long memberId = 1;
-        log.info("getProfile()");
-        Member member = memberService.getProfileInfo(memberId);         //TODO
 
-        return ResponseEntity.status(HttpStatus.OK).body(member);
+        MemberProfileResponse profileResponse = memberService.getProfileInfo(memberId);         //TODO
+
+        return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
     }
 
     @Operation(summary = "회원정보 수정", description = "현재 로그인한 회원의 프로필 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "회원정보 수정 성공")
     @PutMapping ("/setProfile")
-    public ResponseEntity<Member> setProfile(@RequestBody MemberUpdateRequest request) {
+    public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest request) {
 
         //임시 유저 아이디
         long memberId = 1;
-        log.info("setProfile() : " +  request);
-        Member member = memberService.setProfileInfo(memberId, request);         //TODO
 
-        return ResponseEntity.status(HttpStatus.OK).body(member);
+        MemberProfileResponse profileResponse = memberService.setProfileInfo(memberId, request);         //TODO
+
+        return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
     }
 }

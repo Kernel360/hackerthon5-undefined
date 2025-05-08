@@ -3,6 +3,7 @@ package org.server.core.member.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.member.api.payload.request.MemberUpdateRequest;
+import org.server.core.member.api.payload.response.MemberProfileResponse;
 import org.server.core.member.domain.Member;
 import org.server.core.member.domain.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -24,15 +25,15 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public Member getProfileInfo(long memberId) {
+    public MemberProfileResponse getProfileInfo(long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        return member;
+        return MemberProfileResponse.from(member);
     }
 
     @Transactional
-    public Member setProfileInfo(long memberId, MemberUpdateRequest request) {
+    public MemberProfileResponse setProfileInfo(long memberId, MemberUpdateRequest request) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
@@ -42,6 +43,11 @@ public class MemberService {
                 request.position()
         );
 
-        return memberRepository.save(member);
+        memberRepository.save(member);
+
+        Member memberUpdate = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        return MemberProfileResponse.from(memberUpdate);
     }
 }
