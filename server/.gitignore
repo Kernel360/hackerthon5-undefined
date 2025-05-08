@@ -35,3 +35,14 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Terraform ###
+.terraform*
+backend*
+output*
+variables*
+provider*
+terraform.tfstate*
+terraform.tfvars
+*plan
+*backend.tf
