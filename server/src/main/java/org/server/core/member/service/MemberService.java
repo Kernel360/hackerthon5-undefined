@@ -1,12 +1,11 @@
 package org.server.core.member.service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.server.core.member.api.payload.response.LoginResponse;
 import org.server.core.member.api.payload.response.OAuthTokenResponse;
+import org.server.core.member.config.GithubApiHttpInterface;
 import org.server.core.member.config.OAuthConfig;
 import org.server.core.member.domain.Member;
 import org.server.core.member.domain.MemberRepository;
@@ -14,19 +13,15 @@ import org.server.core.member.domain.OAuthProvider;
 import org.server.core.member.domain.UserProfile;
 import org.server.core.token.domain.Token;
 import org.server.core.token.service.TokenService;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
 
+    private final GithubApiHttpInterface githubApiHttpInterface;
     private final MemberRepository memberRepository;
     private final OAuthConfig oAuthConfig;
     private final TokenService tokenService;
@@ -63,27 +58,8 @@ public class MemberService {
     }
 
     private OAuthTokenResponse getToken(String code) {
-        return WebClient.create()
-                .post()
-                .uri(oAuthConfig.getTokenUri())
-                .headers(header -> {
-                    header.setBasicAuth(oAuthConfig.getClientId(), oAuthConfig.getSecretKey());
-                    header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-                    header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
-                })
-                .bodyValue(tokenRequest(code))
-                .retrieve()
-                .bodyToMono(OAuthTokenResponse.class)
-                .block();
-    }
-
-    private MultiValueMap<String, String> tokenRequest(String code) {
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("code", code);
-        formData.add("grant_type", "authorization_code");
-        formData.add("redirect_uri", oAuthConfig.getRedirectUri());
-        return formData;
+        return githubApiHttpInterface.callTokenApi(oAuthConfig.getClientId(), oAuthConfig.getSecretKey(), code,
+                oAuthConfig.getRedirectUri());
     }
 
     public UserProfile getUserProfile(OAuthProvider provider, OAuthTokenResponse tokenResponse) {
@@ -93,19 +69,12 @@ public class MemberService {
                 attributes.get("avatar_url").toString());
     }
 
-    private Map<String, Object> getUserAttributes(OAuthTokenResponse tokenResponse) {
-        return WebClient.create()
-                .get()
-                .uri(oAuthConfig.getUserInfoUri())
-                .headers(header -> header.setBearerAuth(tokenResponse.getAccessToken()))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
-                })
-                .block();
+    public Map<String, Object> getUserAttributes(OAuthTokenResponse tokenResponse) {
+        String authorizationHeader = "Bearer " + tokenResponse.getAccessToken();
+        return githubApiHttpInterface.callUserInfoApi(authorizationHeader);
     }
 
     private Optional<Member> getByAuthId(String oAuthId) {
-        //FIXME: Optional 반환 X
         return memberRepository.findByAuthId(oAuthId);
     }
 }
