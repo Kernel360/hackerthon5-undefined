@@ -1,0 +1,19 @@
+{
+  "lang": "en-KR",
+  "name": "프로젝트 uptime",
+  "short_name": "uptime",
+  "description": "uptime",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#000",
+  "background_color": "#000",
+  "icons": [
+    {
+      "src": "/favicon/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
