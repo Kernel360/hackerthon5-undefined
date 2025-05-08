@@ -36,5 +36,17 @@ public interface MetricRepository extends JpaRepository<Metric, Long> {
             @Param("end") Instant end
     );
 
+    @Query("""
+                select new org.server.core.metric.domain.ActiveDomainPathEntry(m.siteDomain, m.metadata.path, count(m))
+                 from Metric m
+                    where m.memberId = :memberId
+                    and m.metadata.requestAt between :start and :end
+                  group by m.siteDomain.id, m.metadata.path
+            """)
+    List<ActiveDomainPathEntry> aggregate24HourUsageDomainTraceBy(
+            @Param("memberId") Long memberId,
+            @Param("start") Instant start,
+            @Param("end") Instant end
+    );
 
 }
