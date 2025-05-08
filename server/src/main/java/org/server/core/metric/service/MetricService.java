@@ -1,19 +1,27 @@
 package org.server.core.metric.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.server.core.metric.domain.*;
+import org.server.core.metric.domain.ActiveTimeEntry;
+import org.server.core.metric.domain.Domain;
+import org.server.core.metric.domain.Metric;
+import org.server.core.metric.domain.MetricMetadata;
+import org.server.core.metric.domain.MetricRepository;
+import org.server.core.metric.domain.Term;
 import org.server.core.site.domain.SiteDomain;
 import org.server.core.site.domain.SiteDomainRepository;
 import org.server.core.site.infra.ExternalSiteClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.Duration;
-import java.util.*;
 
 @Service
 @Transactional
@@ -34,14 +42,13 @@ public class MetricService {
     public List<ActiveTimeEntry> findByTerm(Long userId, Term term) {
         LocalDateTime start = getStartTime(term);
 
-        List<Metric> userMetrics = metricRepository.findAllByMemberIdAndRequestAtAfter(userId, start.toInstant(ZoneOffset.of("+09:00")));
+        List<Metric> userMetrics = metricRepository.findAllByMemberIdAndMetadataRequestAt(userId,
+                start.toInstant(ZoneOffset.of("+09:00")));
         if (userMetrics.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<ActiveTimeEntry> activeTime = calculateActiveTime(userMetrics);
-
-        return activeTime;
+        return calculateActiveTime(userMetrics);
     }
 
     public LocalDateTime getStartTime(Term term) {
@@ -64,7 +71,8 @@ public class MetricService {
         // path에 따라 요청 시간 계산 로직 추가 필요
         for (Metric metric : metrics) {
             SiteDomain siteDomain = metric.getSiteDomain();
-            LocalDateTime requestAt = LocalDateTime.ofInstant(metric.getMetadata().requestAt(), ZoneOffset.of("+09:00"));
+            LocalDateTime requestAt = LocalDateTime.ofInstant(metric.getMetadata().requestAt(),
+                    ZoneOffset.of("+09:00"));
 
             domainTime.putIfAbsent(siteDomain, new DomainTimeEntry(requestAt, 0L));
 
