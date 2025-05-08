@@ -7,7 +7,7 @@ spring:
       - optional:file:.env[.properties]
       - oauth.yml
   profiles:
-    active: dev
+    active: local
     group:
       local: local
       dev: dev
