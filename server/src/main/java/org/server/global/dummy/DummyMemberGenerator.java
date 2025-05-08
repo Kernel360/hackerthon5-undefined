@@ -25,8 +25,6 @@ public class DummyMemberGenerator {
                         .limit(10)
                         .mapToObj(i -> new Member(
                                 "test"+i,
-                                OAuthProvider.GITHUB,
-                                Position.BACKEND,
                                 "https://www.naver.com",
                                 "nickname" + i
                         ))

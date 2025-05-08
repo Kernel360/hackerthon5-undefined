@@ -10,7 +10,6 @@ import org.server.global.common.BaseEntity;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 public class Member extends BaseEntity {
 
@@ -26,7 +25,7 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
-    public Member(String oAuthId, OAuthProvider oAuthProvider, Position position, String profileUrl, String nickname) {
+    public Member(String oAuthId, String profileUrl, String nickname) {
         this.authId = oAuthId;
         this.oAuthProvider = OAuthProvider.GITHUB;  //FIXME: GITHUB 고정 X
         this.position = Position.NONE;
