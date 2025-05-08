@@ -12,4 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class OAuthConfig {
     private String clientId;
     private String secretKey;
+    private String redirectUri;
+    private String tokenUri;
+    private String userInfoUri;
 }
