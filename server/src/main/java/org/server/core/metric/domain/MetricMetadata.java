@@ -9,7 +9,7 @@ public record MetricMetadata(
         @Column(nullable = false)
         Instant requestAt,
 
-        @Column(nullable = false)
+        @Column(nullable = false, length = 1000)
         String path
 ) {
 }
