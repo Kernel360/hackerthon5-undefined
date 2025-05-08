@@ -2,8 +2,8 @@ package org.server.core.metric.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.server.core.metric.api.payload.MetricGetRequest;
-import org.server.core.metric.api.payload.MetricInsertRequest;
+import org.server.core.metric.api.payload.request.MetricGetRequest;
+import org.server.core.metric.api.payload.request.MetricInsertRequest;
 import org.server.core.metric.domain.ActiveTimeEntry;
 import org.server.core.metric.service.MetricService;
 import org.springframework.http.HttpStatus;
@@ -27,14 +27,11 @@ public class MetricApi {
     }
 
     @GetMapping
-    public ResponseEntity<List<ActiveTimeEntry>> get(@RequestBody MetricGetRequest request) {
+    public ResponseEntity<List<ActiveTimeEntry>> get(@RequestHeader MetricGetRequest request) {
         log.info("Get metric: {}", request);
-        List<ActiveTimeEntry> activeTime = metricService.find(request.userId(), request.term());
+        List<ActiveTimeEntry> activeTime = metricService.findByTerm(request.userId(), request.term());
 
-        var response = ResponseEntity
-                .status(HttpStatus.OK)
-                .body(activeTime);
+        return ResponseEntity.status(HttpStatus.OK).body(activeTime);
 
-        return response;
     }
 }

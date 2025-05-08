@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.Duration;
 import java.util.*;
 
 @Service
@@ -30,7 +31,7 @@ public class MetricService {
         metricRepository.save(new Metric(userId, siteDomain, metric));
     }
 
-    public List<ActiveTimeEntry> find(Long userId, String term) {
+    public List<ActiveTimeEntry> findByTerm(Long userId, Term term) {
         LocalDateTime start = getStartTime(term);
 
         List<Metric> userMetrics = metricRepository.findAllByMemberIdAndRequestAtAfter(userId, start.toInstant(ZoneOffset.of("+09:00")));
@@ -43,13 +44,13 @@ public class MetricService {
         return activeTime;
     }
 
-    public LocalDateTime getStartTime(String term) {
+    public LocalDateTime getStartTime(Term term) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = switch (term) {
-            case "day" -> // 지난 24시간이 아닌 당일 0시부터
+            case DAY -> // 지난 24시간이 아닌 당일 0시부터
                     now.toLocalDate().atStartOfDay();
-            case "week" -> now.minusWeeks(1);
-            case "month" -> now.minusMonths(1);
+            case WEEK -> now.minusWeeks(1);
+            case MONTH -> now.minusMonths(1);
             default -> throw new IllegalArgumentException("Invalid time parameter : " + term);
         };
 
@@ -67,7 +68,7 @@ public class MetricService {
 
             domainTime.putIfAbsent(siteDomain, new DomainTimeEntry(requestAt, 0L));
 
-            long duration = java.time.Duration.between(domainTime.get(siteDomain).getRequestAt(), requestAt).toSeconds();
+            long duration = Duration.between(domainTime.get(siteDomain).getRequestAt(), requestAt).toSeconds();
             domainTime.get(siteDomain).addDuration(duration);
             domainTime.get(siteDomain).setRequestAt(requestAt);
         }
