@@ -4,11 +4,13 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.metric.api.payload.request.MetricDailyUsageRequest;
+import org.server.core.metric.api.payload.request.MetricDailyUsageTraceRequest;
 import org.server.core.metric.api.payload.request.MetricDomainDailyUsageRequest;
 import org.server.core.metric.api.payload.request.MetricGetRequest;
 import org.server.core.metric.api.payload.request.MetricInsertRequest;
 import org.server.core.metric.api.payload.response.ActiveSiteDomainEntry;
 import org.server.core.metric.domain.ActiveHourEntry;
+import org.server.core.metric.domain.ActiveSiteDomainTraceEntry;
 import org.server.core.metric.domain.ActiveTimeEntry;
 import org.server.core.metric.service.MetricService;
 import org.server.core.metric.service.MetricUsageService;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,14 +38,14 @@ public class MetricApi {
         metricService.save(request.userId(), request.toDomain(), request.toMetricMetadata());
     }
 
-    // TODO query param으로 바꾸도록
     @GetMapping
-    public ResponseEntity<List<ActiveTimeEntry>> get(@RequestHeader MetricGetRequest request) {
+    public ResponseEntity<List<ActiveTimeEntry>> get(@ModelAttribute MetricGetRequest request) {
         log.info("Get metric: {}", request);
         List<ActiveTimeEntry> activeTime = metricService.findByTerm(request.userId(), request.term());
 
         return ResponseEntity.status(HttpStatus.OK).body(activeTime);
     }
+
 
     @GetMapping("daily-usage")
     public ResponseEntity<List<ActiveHourEntry>> get(@ModelAttribute MetricDailyUsageRequest request) {
@@ -54,5 +55,10 @@ public class MetricApi {
     @GetMapping("/daily-usage/domain-usage-ratio")
     public ResponseEntity<List<ActiveSiteDomainEntry>> get(@ModelAttribute MetricDomainDailyUsageRequest request) {
         return ResponseEntity.ok(metricUsageService.aggregateByDomainDailyUsage(request.userId(), request.date()));
+    }
+
+    @GetMapping("/daily-usage/trace")
+    public ResponseEntity<List<ActiveSiteDomainTraceEntry>> get(@ModelAttribute MetricDailyUsageTraceRequest request) {
+        return ResponseEntity.ok(metricUsageService.aggregateByDailyUsageTrace(request.userId(), request.date()));
     }
 }

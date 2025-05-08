@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.server.core.metric.api.payload.response.ActiveSiteDomainEntry;
+import org.server.core.metric.domain.ActiveDomainPathEntry;
 import org.server.core.metric.domain.ActiveHourEntry;
+import org.server.core.metric.domain.ActiveSiteDomainTraceEntry;
 import org.server.core.metric.domain.MetricRepository;
 import org.server.global.utils.LocalDateToInstant;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,21 @@ public class MetricUsageService {
     );
 
     private final MetricRepository metricRepository;
+
+    // 24시간 사용한 도메인 집계
+    public List<ActiveSiteDomainTraceEntry> aggregateByDailyUsageTrace(Long userId, LocalDate date) {
+        var range = LocalDateToInstant.getBoundaryInstants(date, LocalDateToInstant.SEOUL_ZONE);
+
+        var metrics = metricRepository.aggregate24HourUsageDomainTraceBy(userId, range.start(), range.end());
+
+        var siteDomainListMap = metrics.stream()
+                .collect(Collectors.groupingBy(ActiveDomainPathEntry::siteDomain));
+
+        return siteDomainListMap.entrySet()
+                .stream()
+                .map(ActiveSiteDomainTraceEntry::from)
+                .toList();
+    }
 
     // 24시간 사용량 집계
     public List<ActiveHourEntry> aggregateByDailyUsage(Long userId, LocalDate date) {
