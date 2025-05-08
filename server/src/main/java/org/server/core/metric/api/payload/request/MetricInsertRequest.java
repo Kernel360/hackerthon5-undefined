@@ -15,6 +15,6 @@ public record MetricInsertRequest(
     }
 
     public MetricMetadata toMetricMetadata() {
-        return new MetricMetadata(now, url.substring(url.lastIndexOf("/") + 1));
+        return new MetricMetadata(now, url.replaceFirst("^https?://[^/]+", ""));
     }
 }
