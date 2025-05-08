@@ -42,8 +42,10 @@ public class MetricService {
     public List<ActiveTimeEntry> findByTerm(Long userId, Term term) {
         LocalDateTime start = getStartTime(term);
 
-        List<Metric> userMetrics = metricRepository.findAllByMemberIdAndMetadataRequestAt(userId,
-                start.toInstant(ZoneOffset.of("+09:00")));
+        List<Metric> userMetrics = metricRepository.findAllByMemberIdAndMetadataRequestAtAfter(
+                userId,
+                start.toInstant(ZoneOffset.of("+09:00"))
+        );
         if (userMetrics.isEmpty()) {
             return Collections.emptyList();
         }
