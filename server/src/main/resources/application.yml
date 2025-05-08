@@ -2,7 +2,9 @@ spring:
   application:
     name: server
   config:
-    import: datasource.yml
+    import:
+      - datasource.yml
+      - optional:file:.env[.properties]
   profiles:
     active: local
     group:
@@ -10,3 +12,9 @@ spring:
       dev: dev
       test: test
       prod: prod
+
+
+custom:
+  oauth:
+    clientId: ${GITHUB_CLIENT_ID}
+    secretKey: ${GITHUB_SECRET_KEY}
