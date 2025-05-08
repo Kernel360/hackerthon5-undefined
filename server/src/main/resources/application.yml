@@ -5,22 +5,12 @@ spring:
     import:
       - datasource.yml
       - optional:file:.env[.properties]
+      - oauth.yml
   profiles:
-    active: dev
+    active: local
     group:
       local: local
       dev: dev
       test: test
       prod: prod
 
-custom:
-  oauth:
-      clientId: ${GITHUB_CLIENT_ID}
-      secretKey: ${GITHUB_SECRET_KEY}
-      redirectUri: ${GITHUB_REDIRECT_URI}
-      tokenUri: https://github.com/login/oauth/access_token
-      userInfoUri: https://api.github.com/user
-
-jwt:
-  token:
-    secret: ${JWT_SECRET_KEY}
