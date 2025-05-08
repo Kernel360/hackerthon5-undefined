@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.server.core.metric.domain.Domain;
 import org.server.core.site.domain.SiteDomain;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 @Slf4j
@@ -43,9 +44,13 @@ public class ExternalSiteClientImpl implements ExternalSiteClient {
     }
 
     private String getHtml(String url) {
-        return restClient.get()
-                .uri(url)
-                .retrieve()
-                .body(String.class);
+        try {
+            return restClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .body(String.class);
+        } catch (HttpClientErrorException exception) {
+            return exception.getResponseBodyAs(String.class);
+        }
     }
 }
