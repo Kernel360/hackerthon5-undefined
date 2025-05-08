@@ -1,14 +1,12 @@
 package org.server.core.member.api.payload.request;
 
 import org.server.core.member.domain.OAuthProvider;
+import org.server.core.member.domain.Position;
 
 public record MemberJoinRequest(
         String nickname,
-        String oAuthProvider,
+        OAuthProvider oAuthProvider,
         String profileUrl,
-        String position
+        Position position
 ) {
-    public MemberJoinRequest {
-        oAuthProvider = OAuthProvider.getProvider(oAuthProvider).name(); // FIXME: 임시
-    }
 }
