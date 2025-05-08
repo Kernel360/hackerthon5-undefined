@@ -1,17 +1,16 @@
 package org.server.core.member.exception;
 
-import static org.server.global.consts.UndefinedStatics.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.server.global.exception.BaseErrorCode;
 import org.server.global.exception.ErrorReason;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
 public enum MemberErrorCode implements BaseErrorCode {
 
-    UNDEFINED_OAUTH_PROVIDER_ERROR(BAD_REQUEST, "UNDEFINED_400_1", "올바른 로그인 방식이 아닙니다.");
+    UNDEFINED_OAUTH_PROVIDER_ERROR(HttpStatus.BAD_REQUEST.value(), "UNDEFINED_400_1", "올바른 로그인 방식이 아닙니다.");
 
     private Integer status;
     private String code;
