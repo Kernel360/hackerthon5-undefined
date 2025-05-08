@@ -1,4 +1,4 @@
-package org.server.core.metric.api.payload;
+package org.server.core.metric.api.payload.request;
 
 import java.time.Instant;
 import org.server.core.metric.domain.Domain;

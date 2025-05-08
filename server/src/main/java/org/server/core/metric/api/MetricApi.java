@@ -22,4 +22,13 @@ public class MetricApi {
         log.info("Insert metric: {}", request);
         metricService.save(request.userId(), request.toDomain(), request.toMetricMetadata());
     }
+
+    @GetMapping
+    public ResponseEntity<List<ActiveTimeEntry>> get(@RequestHeader MetricGetRequest request) {
+        log.info("Get metric: {}", request);
+        List<ActiveTimeEntry> activeTime = metricService.findByTerm(request.userId(), request.term());
+
+        return ResponseEntity.status(HttpStatus.OK).body(activeTime);
+    }
+    
 }
