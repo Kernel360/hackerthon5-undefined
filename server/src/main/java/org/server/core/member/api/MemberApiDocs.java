@@ -19,11 +19,11 @@ public interface MemberApiDocs {
     @ApiResponse(responseCode = "204")
     ResponseEntity<Void> join(@RequestBody MemberJoinRequest request);
 
-    @Operation(summary = "회원정보 조회", description = "현재 로그인한 회원의 프로필 정보를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "회원정보 조회 성공")
-    ResponseEntity<MemberProfileResponse> getProfile();
-
-    @Operation(summary = "회원정보 수정", description = "현재 로그인한 회원의 프로필 정보를 수정합니다.")
-    @ApiResponse(responseCode = "200", description = "회원정보 수정 성공")
-    ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest request);
+//    @Operation(summary = "회원정보 조회", description = "현재 로그인한 회원의 프로필 정보를 조회합니다.")
+//    @ApiResponse(responseCode = "200", description = "회원정보 조회 성공")
+//    ResponseEntity<MemberProfileResponse> getProfile();
+//
+//    @Operation(summary = "회원정보 수정", description = "현재 로그인한 회원의 프로필 정보를 수정합니다.")
+//    @ApiResponse(responseCode = "200", description = "회원정보 수정 성공")
+//    ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest request);
 }

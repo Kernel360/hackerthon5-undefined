@@ -1,5 +1,6 @@
 package org.server.core.member.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.member.api.payload.request.MemberJoinRequest;
@@ -10,6 +11,8 @@ import org.server.core.member.api.payload.request.MemberUpdateRequest;
 import org.server.core.member.api.payload.response.MemberProfileResponse;
 
 import org.server.core.member.service.MemberService;
+import org.server.core.token.domain.LoginUser;
+import org.server.core.token.service.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberRestController implements MemberApiDocs {
 
     private final MemberService memberService;
+    private final TokenService tokenService;
 
     @Override
     @PostMapping("/join")
@@ -47,24 +51,23 @@ public class MemberRestController implements MemberApiDocs {
         return ResponseEntity.ok().body(response);
     }
 
-
     @GetMapping("/getProfile")
-    public ResponseEntity<MemberProfileResponse> getProfile() {
-        //임시 유저 아이디
-        long memberId = 1;
+    public ResponseEntity<MemberProfileResponse> getProfile(HttpServletRequest request) {
+        //FIXME: 관심사 분리, 중복 제거 하고싶지만 일단 보류...
+        String accessToken = tokenService.substringToken(request);
+        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
 
-        MemberProfileResponse profileResponse = memberService.getProfileInfo(memberId);         //TODO
-
+        MemberProfileResponse profileResponse = memberService.getProfileInfo(loginUser.getMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
     }
 
     @PutMapping("/setProfile")
-    public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest request) {
-        //임시 유저 아이디
-        long memberId = 1;
+    public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest memberUpdateRequest,
+                                                            HttpServletRequest request) {
+        String accessToken = tokenService.substringToken(request);
+        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
+        MemberProfileResponse response = memberService.setProfileInfo(memberUpdateRequest, loginUser.getMemberId());
 
-        MemberProfileResponse profileResponse = memberService.setProfileInfo(memberId, request);         //TODO
-
-        return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
