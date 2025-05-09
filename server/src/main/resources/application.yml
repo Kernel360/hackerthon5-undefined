@@ -15,4 +15,10 @@ spring:
       dev: dev
       test: test
       prod: prod
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        instance-profile: false
 
