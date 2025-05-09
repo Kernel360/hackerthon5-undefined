@@ -6,6 +6,8 @@ spring:
       - datasource.yml
       - optional:file:.env[.properties]
       - oauth.yml
+      - optional:aws-secretsmanager:uptime-db-secret-202505080405
+      - optional:aws-secretsmanager:uptime-github-oauth-secret-202505080405
   profiles:
     active: local
     group:
@@ -13,4 +15,10 @@ spring:
       dev: dev
       test: test
       prod: prod
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        instance-profile: true
 
