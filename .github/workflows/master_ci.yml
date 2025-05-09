@@ -54,6 +54,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
+          pwd
           cd server
           docker build -t ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest .
           
