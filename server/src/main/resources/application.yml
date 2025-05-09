@@ -20,5 +20,5 @@ spring:
       region:
         static: ap-northeast-2
       credentials:
-        instance-profile: false
+        instance-profile: true
 
