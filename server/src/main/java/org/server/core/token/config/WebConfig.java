@@ -18,25 +18,25 @@ public class WebConfig implements WebMvcConfigurer {
     private final LoginUserArgumentResolver loginUserArgumentResolver;
     private final AuthenticationInterceptor authenticationInterceptor;
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(loginUserArgumentResolver);
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authenticationInterceptor)
-                .order(1)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/", "/api/v1/member/login/oauth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-resources/**",
-                        "/webjars/**",
-                        "/favicon.ico",
-                        "/api/v1/token/gen/test/**"
-                );
-    }
+//    @Override
+//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+//        resolvers.add(loginUserArgumentResolver);
+//    }
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(authenticationInterceptor)
+//                .order(1)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/", "/api/v1/member/login/oauth/**",
+//                        "/swagger-ui/**",
+//                        "/v3/api-docs/**",
+//                        "/swagger-resources/**",
+//                        "/webjars/**",
+//                        "/favicon.ico",
+//                        "/api/v1/token/gen/test/**"
+//                );
+//    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

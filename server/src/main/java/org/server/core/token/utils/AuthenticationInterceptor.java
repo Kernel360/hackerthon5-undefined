@@ -20,13 +20,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        try {
-            String accessToken = jwtInterceptorHelper.extractAccessTokenFromRequest(request);
-            LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
-            request.setAttribute("loginUser", loginUser);
-        } catch (Exception e) {
-            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
-        }
-        return true;
+        String accessToken = jwtInterceptorHelper.extractAccessTokenFromRequest(request);
+        LoginUser loginUser = tokenService.getLoginUserFromAccessToken(accessToken);
+        request.setAttribute("loginUser", loginUser);
+
+        return false;
     }
 }
