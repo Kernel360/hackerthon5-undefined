@@ -1,5 +1,5 @@
 # 빌드 스테이지
-FROM gradle:8.3-jdk21 AS builder
+FROM gradle:8.3 AS builder
 WORKDIR /app
 COPY --chown=gradle:gradle . /app
 RUN gradle build --no-daemon
