@@ -245,7 +245,7 @@ resource "aws_instance" "web" {
     vpc_security_group_ids = [aws_security_group.uptime-backend_sg.id]
     //iam_instance_profile   = aws_iam_instance_profile.uptime-ec2-instance-profile.name
     associate_public_ip_address = true
-    key_name = "uptime-backend-key-pair"
+    key_name = "uptime"
 
     tags = {
         Name = "web-server"
