@@ -1,8 +1,8 @@
 # 빌드 스테이지
-FROM gradle:8.3 AS builder
+FROM gradle:8.14-jdk21 AS builder
 WORKDIR /app
 COPY --chown=gradle:gradle . /app
-RUN gradle build --no-daemon
+RUN gradle clean build -x test
 
 # 실행 스테이지
 FROM amazoncorretto:21
