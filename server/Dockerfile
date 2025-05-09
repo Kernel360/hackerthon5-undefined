@@ -9,7 +9,7 @@ RUN pwd
 FROM amazoncorretto:21
 WORKDIR /app
 RUN pwd
-RUN ls
+RUN ls -al
 COPY --from=builder build/libs/server-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
