@@ -1,5 +1,6 @@
 package org.server.core.metric.api;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,20 +30,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/metrics")
-public class MetricApi {
+public class MetricApi implements MetricApiDocs {
 
     private final MetricService metricService;
     private final MetricUsageService metricUsageService;
     private final TokenService tokenService;
 
+    @Override
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public void insert(
             @RequestBody MetricInsertRequest request, LoginUser loginUser
     ) {
         metricService.save(loginUser.getMemberId(), request.toDomain(), request.toMetricMetadata());
     }
 
+    @Override
     @GetMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<ActiveTimeEntry>> get(
             @ModelAttribute MetricGetRequest request,
             LoginUser loginUser
@@ -53,8 +58,9 @@ public class MetricApi {
         return ResponseEntity.status(HttpStatus.OK).body(activeTime);
     }
 
-
+    @Override
     @GetMapping("daily-usage")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<ActiveHourEntry>> get(
             @ModelAttribute MetricDailyUsageRequest request,
             LoginUser loginUser
@@ -62,7 +68,9 @@ public class MetricApi {
         return ResponseEntity.ok(metricUsageService.aggregateByDailyUsage(loginUser.getMemberId(), request.date()));
     }
 
+    @Override
     @GetMapping("/daily-usage/domain-usage-ratio")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<ActiveSiteDomainEntry>> get(
             @ModelAttribute MetricDomainDailyUsageRequest request,
             LoginUser loginUser
@@ -74,7 +82,9 @@ public class MetricApi {
         );
     }
 
+    @Override
     @GetMapping("/daily-usage/trace")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<ActiveSiteDomainTraceEntry>> get(
             @ModelAttribute MetricDailyUsageTraceRequest request,
             LoginUser loginUser
