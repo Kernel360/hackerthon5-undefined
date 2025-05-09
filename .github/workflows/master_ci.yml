@@ -55,7 +55,7 @@ jobs:
       - name: Build Docker Image
         run: |
           cd server
-          docker built -t ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest .
+          docker build -t ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest .
           
       - name: Login to Amazon ECR
         run: |
