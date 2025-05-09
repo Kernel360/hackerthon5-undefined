@@ -58,10 +58,12 @@ jobs:
           cd server
           docker build -t ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest .
           
-      - name: Login to Amazon ECR
+      ## Amazon ECR 로그인
+      - name: Login to AWS ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
-          | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          | docker login --username AWS \
+          --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       - name: Push to AWS ECR
         run: |
