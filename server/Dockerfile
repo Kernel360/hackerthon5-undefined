@@ -8,7 +8,7 @@ RUN pwd
 # 실행 스테이지
 FROM amazoncorretto:21
 WORKDIR /app
-RUN PWD
+RUN pwd
 RUN ls
 COPY --from=builder build/libs/server-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
