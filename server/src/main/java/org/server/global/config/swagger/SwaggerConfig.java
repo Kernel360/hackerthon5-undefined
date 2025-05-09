@@ -26,8 +26,8 @@ public class SwaggerConfig {
 
     private Info info() {
         return new Info()
-                .title("Undefined API")
-                .description("사용 시간을 트래킹하는 서비스의 Team Undefined의 API 문서입니다.")
+                .title("Uptime API")
+                .description("Uptime의 API 문서입니다.")
                 .version("1.0");
     }
 }

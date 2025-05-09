@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "Undefined 회원 기능 API", description = "회원 관련 기능 API 명세 문서입니다.")
+@Tag(name = "회원 기능 API", description = "회원 관련 기능 API 명세 문서입니다.")
 public interface MemberApiDocs {
 
     @Operation(summary = "깃허브 로그인 요청 API", description = "회원가입 혹은 로그인을 요청하고, 토큰을 반환합니다")
