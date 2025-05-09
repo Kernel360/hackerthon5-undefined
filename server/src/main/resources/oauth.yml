@@ -1,8 +1,8 @@
 custom:
   oauth:
-    clientId: ${GITHUB_CLIENT_ID}
-    secretKey: ${GITHUB_SECRET_KEY}
-    redirectUri: ${GITHUB_REDIRECT_URI}
+    clientId: ${PROD_GITHUB_CLIENT_ID}
+    secretKey: ${PROD_GITHUB_SECRET_KEY}
+    redirectUri: ${PROD_GITHUB_REDIRECT_URI}
     tokenUri: https://github.com/login/oauth/access_token
     userInfoUri: https://api.github.com/user
 
