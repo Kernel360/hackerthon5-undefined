@@ -6,6 +6,8 @@ spring:
       - datasource.yml
       - optional:file:.env[.properties]
       - oauth.yml
+      - optional:aws-secretsmanager:uptime-db-secret-202505080405
+      - optional:aws-secretsmanager:uptime-github-oauth-secret-202505080405
   profiles:
     active: local
     group:
