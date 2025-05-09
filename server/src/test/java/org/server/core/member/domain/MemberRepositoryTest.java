@@ -23,7 +23,7 @@ class MemberRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        testMember = new Member(OAuthProvider.GITHUB, Position.FRONTEND, "url", "testMember");
+        testMember = new Member("testOAuthId", "testProfileUrl", "testName");
     }
 
     @Test
@@ -37,7 +37,7 @@ class MemberRepositoryTest {
 
         //then
         Assertions.assertThat(maybeMember.isPresent()).isTrue();
-        Assertions.assertThat(maybeMember.get().getNickname()).isEqualTo("testMember");
+        Assertions.assertThat(maybeMember.get().getNickname()).isEqualTo("testName");
     }
 
     @Test
