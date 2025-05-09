@@ -37,7 +37,7 @@ class MemberRepositoryTest {
 
         //then
         Assertions.assertThat(maybeMember.isPresent()).isTrue();
-        Assertions.assertThat(maybeMember.get().getNickname()).isEqualTo("testName");
+        Assertions.assertThat(maybeMember.get().getNickname()).isEqualTo("ttt");
     }
 
     @Test
