@@ -1,5 +1,6 @@
 package org.server.core.member.api;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.server.core.member.api.payload.request.MemberJoinRequest;
@@ -36,6 +37,7 @@ public class MemberRestController implements MemberApiDocs {
 
     @Override
     @GetMapping("/getProfile")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<MemberProfileResponse> getProfile(LoginUser loginUser) {
         MemberProfileResponse profileResponse = memberService.getProfileInfo(loginUser.getMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
@@ -43,6 +45,7 @@ public class MemberRestController implements MemberApiDocs {
 
     @Override
     @PutMapping("/setProfile")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest memberUpdateRequest,
                                                             LoginUser loginUser) {
         MemberProfileResponse response = memberService.setProfileInfo(memberUpdateRequest, loginUser.getMemberId());

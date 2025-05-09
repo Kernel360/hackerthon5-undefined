@@ -1,6 +1,7 @@
 package org.server.core.member.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,7 +35,7 @@ public interface MemberApiDocs {
             content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = MemberProfileResponse.class))
             })
-    ResponseEntity<MemberProfileResponse> getProfile(LoginUser loginUser);
+    ResponseEntity<MemberProfileResponse> getProfile(@Parameter(hidden = true) LoginUser loginUser);
 
     @Operation(summary = "프로필 수정 요청 API", description = "회원의 프로필 수정을 요청합니다")
     @ApiResponse(responseCode = "200", description = "로그인이 완료되었습니다.",
@@ -43,5 +44,5 @@ public interface MemberApiDocs {
             })
     ResponseEntity<MemberProfileResponse> setProfile(
             @RequestBody @Schema(implementation = MemberUpdateRequest.class) MemberUpdateRequest memberUpdateRequest,
-            LoginUser loginUser);
+            @Parameter(hidden = true) LoginUser loginUser);
 }
