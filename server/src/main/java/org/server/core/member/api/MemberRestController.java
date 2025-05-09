@@ -28,27 +28,20 @@ public class MemberRestController implements MemberApiDocs {
     private final MemberService memberService;
 
     @Override
-    @PostMapping("/join")
-    public ResponseEntity<Void> join(MemberJoinRequest request) {
-        //memberService.join();         //TODO
-
-        log.info("Join request : {}", request);
-
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/login/oauth/{provider}")
     public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestParam String code) {
         LoginResponse response = memberService.tryLogin(code, provider);
         return ResponseEntity.ok().body(response);
     }
 
+    @Override
     @GetMapping("/getProfile")
     public ResponseEntity<MemberProfileResponse> getProfile(LoginUser loginUser) {
         MemberProfileResponse profileResponse = memberService.getProfileInfo(loginUser.getMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(profileResponse);
     }
 
+    @Override
     @PutMapping("/setProfile")
     public ResponseEntity<MemberProfileResponse> setProfile(@RequestBody MemberUpdateRequest memberUpdateRequest,
                                                             LoginUser loginUser) {
