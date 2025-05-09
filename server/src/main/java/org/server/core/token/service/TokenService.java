@@ -1,17 +1,18 @@
 package org.server.core.token.service;
 
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.Date;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.server.core.member.domain.Member;
 import org.server.core.member.domain.UserProfile;
-import org.server.core.member.service.MemberService;
+import org.server.core.token.config.JwtConfig;
+import org.server.core.token.domain.LoginUser;
 import org.server.core.token.domain.Token;
 import org.server.core.token.domain.TokenRepository;
+import org.server.core.token.exception.TokenErrorCode;
+import org.server.core.token.exception.TokenException;
 import org.server.core.token.utils.TokenProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TokenService {
 
+    private final JwtConfig jwtConfig;
     private final TokenProvider tokenProvider;
     private final TokenRepository tokenRepository;
-
-    @Value("${jwt.token.secret}")
-    private String secretKey;
-    private final static Long ACCESS_TOKEN_EXPIRE_TIME_MS = 604800000L; // 1주일
 
     @Transactional
     public Token getOrGenerateToken(Long memberId, UserProfile userProfile) {
@@ -46,20 +44,38 @@ public class TokenService {
     @Transactional
     public Token save(Long memberId, UserProfile userProfile) {
 
-        Date expiredAt = calcExpiration();
-        String accessToken = tokenProvider.createAccessToken(memberId, userProfile, secretKey, expiredAt);
+        String accessToken = tokenProvider.createAccessToken(memberId, userProfile);
 
         Token token = Token.builder()
                 .memberId(memberId)
                 .accessToken(accessToken)
-                .expiredAt(expiredAt)
+                .expiredAt(tokenProvider.calcExpiration())      //FIXME: 책임 넘겨줬으니 어떻게 받아올건지 고민
                 .build();
 
         return tokenRepository.save(token);
     }
 
-    public Date calcExpiration() {
-        Date now = new Date();
-        return new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME_MS);
+    public LoginUser getLoginUserFromAccessToken(String accessToken) {
+        Claims claims = tokenProvider.getClaims(accessToken);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserProfile userProfile = objectMapper.convertValue(
+                claims.get(jwtConfig.getMemberProfileKey()), UserProfile.class
+        );
+
+        return LoginUser.builder()
+                .memberId(claims.get(jwtConfig.getMemberIdKey(), Long.class))
+                .userProfile(userProfile)
+                .build();
+    }
+
+    public String substringToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+        }
+
+        return authHeader.substring(7);
     }
 }

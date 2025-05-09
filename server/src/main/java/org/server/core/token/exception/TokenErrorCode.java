@@ -1,4 +1,4 @@
-package org.server.core.member.exception;
+package org.server.core.token.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum MemberErrorCode implements BaseErrorCode {
+public enum TokenErrorCode implements BaseErrorCode {
 
-    UNDEFINED_OAUTH_PROVIDER_ERROR(HttpStatus.BAD_REQUEST.value(), "MEMBER_400_1", "올바른 로그인 방식이 아닙니다."),
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "MEMBER_400_2", "멤버를 찾을 수 없습니다");
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST.value(), "TOKEN_400_1", "비정상적인 토큰이 사용되었습니다."),
+    TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "TOKEN_400_2", "토큰값을 찾을 수 없습니다.");
 
     private Integer status;
     private String code;

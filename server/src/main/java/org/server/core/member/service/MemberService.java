@@ -3,17 +3,19 @@ package org.server.core.member.service;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.server.core.member.api.payload.request.MemberUpdateRequest;
 import org.server.core.member.api.payload.response.LoginResponse;
+import org.server.core.member.api.payload.response.MemberProfileResponse;
 import org.server.core.member.api.payload.response.OAuthTokenResponse;
 import org.server.core.member.config.GithubApiHttpInterface;
 import org.server.core.member.config.OAuthConfig;
-import lombok.extern.slf4j.Slf4j;
-import org.server.core.member.api.payload.request.MemberUpdateRequest;
-import org.server.core.member.api.payload.response.MemberProfileResponse;
 import org.server.core.member.domain.Member;
 import org.server.core.member.domain.MemberRepository;
 import org.server.core.member.domain.OAuthProvider;
 import org.server.core.member.domain.UserProfile;
+import org.server.core.member.exception.MemberErrorCode;
+import org.server.core.member.exception.MemberException;
 import org.server.core.token.domain.Token;
 import org.server.core.token.service.TokenService;
 import org.springframework.stereotype.Service;
@@ -82,29 +84,25 @@ public class MemberService {
         return memberRepository.findByAuthId(oAuthId);
     }
 
-    public MemberProfileResponse getProfileInfo(long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+    public MemberProfileResponse getProfileInfo(Long memberId) {
+        return MemberProfileResponse.from(getById(memberId));
+    }
+
+    @Transactional
+    public MemberProfileResponse setProfileInfo(MemberUpdateRequest updateRequest, Long memberId) {
+        Member member = getById(memberId);
+        member.updateProfile(
+                updateRequest.nickname(),
+                updateRequest.position()
+        );
+
+        //TODO: SETTER 트랜잭션 자동 변경 적용 여부 확인 필요
+        memberRepository.save(member);
 
         return MemberProfileResponse.from(member);
     }
 
-    @Transactional
-    public MemberProfileResponse setProfileInfo(long memberId, MemberUpdateRequest request) {
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        member.updateProfile(
-                request.nickname(),
-                request.position()
-        );
-
-        memberRepository.save(member);
-
-        Member memberUpdate = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        return MemberProfileResponse.from(memberUpdate);
+    private Member getById(Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

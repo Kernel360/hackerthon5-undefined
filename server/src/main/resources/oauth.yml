@@ -8,4 +8,6 @@ custom:
 
 jwt:
   token:
-    secret: ${JWT_SECRET_KEY}
+    secretKey: ${JWT_SECRET_KEY}
+    memberIdKey: ${MEMBER_ID_KEY}
+    memberProfileKey: ${MEMBER_PROFILE_KEY}
