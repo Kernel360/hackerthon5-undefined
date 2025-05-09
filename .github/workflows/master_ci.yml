@@ -29,7 +29,9 @@ jobs:
               ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Run Tests
-        run: gradle clean build
+        run: |
+          cd server
+          gradle clean build
 
   BUILD_AND_PUBLISH:
     needs: TESTING
