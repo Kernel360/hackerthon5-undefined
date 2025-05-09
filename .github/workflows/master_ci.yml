@@ -57,7 +57,15 @@ jobs:
           pwd
           cd server
           docker build -t ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest .
-          
+
+      # Amazon ECR 로그인 및 이미지 푸시
+      ## AWS 자격 증명 설명
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ${{ secrets.AWS_REGION }}
+
       ## Amazon ECR 로그인
       - name: Login to AWS ECR
         run: |
