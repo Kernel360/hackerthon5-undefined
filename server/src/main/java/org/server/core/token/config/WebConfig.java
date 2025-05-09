@@ -43,4 +43,14 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/2.2.0/");
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/*")
+                .allowedOrigins("https://p-uptime.shop/", "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
 }
