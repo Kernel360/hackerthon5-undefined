@@ -5,6 +5,7 @@ COPY --chown=gradle:gradle . /app
 RUN gradle clean build -x test
 RUN pwd
 RUN ls -al
+RUN ls -al build/libs
 
 # 실행 스테이지
 FROM amazoncorretto:21
