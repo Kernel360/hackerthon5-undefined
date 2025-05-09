@@ -28,6 +28,6 @@ jobs:
               ${{ runner.os }}-
               ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      - name: Run Test
+      - name: Run Tests
         run: gradle clean build
 
